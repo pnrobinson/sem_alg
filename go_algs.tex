@@ -68,11 +68,28 @@
 	\maketitle % Automatically created using the information in the commands above
 \end{frame}
 
+
+\begin{frame}{Ontology Algorithms for Translational Research and Clinical Decision Support}
+ \begin{mybluebox}{Game plan}
+ Two lectures with assignments
+ \end{mybluebox}
+ 
+ \begin{itemize}
+ \item My goal in these lectures is to provide insight into how to develop novel algorithms to address challenges in biomedical research and clinical decision support
+ \item Understanding the domain, modelling the domain with ontologies (and schemas), writing algorithms to capture salient aspects of the data
+ \item Today: Mainly Gene Ontology
+ \item Next time: Mainly Human Phenotype Ontology
+ \end{itemize}
+
+\end{frame}
+
+
+
 %----------------------------------------------------------------------------------------
 %	 SECTION 1
 %----------------------------------------------------------------------------------------
 
-\section{Gene Ontology} % Section title slide, unnumbered
+%\section{Gene Ontology} % Section title slide, unnumbered
 
 %------------------------------------------------
 
@@ -129,7 +146,7 @@ databases $\longmapsto$ too diff{}icult to compare between species
  	MIPS & & EC \\
   \end{tabular}
 \end{center}
-
+\vspace{-2mm}
 \begin{itemize}
 \item MIPS: Munich Information Center for Protein Sequences
 \item EC: Enzyme commision def{}initions of enzyme classes, subclasses and sub-subclasses
@@ -264,7 +281,7 @@ replication fork, allowing the resulting single strands to be copied.
 \begin{frame}{Example: fibrillin-1}
 \begin{itemize}
 \item Annotations are made for biological process, molecular function, and cellular component
-\item evidence of source of the assertion (not shown)
+\item evidence and source of the assertion (not shown)
 \end{itemize} 
 
 \begin{center}
@@ -284,7 +301,7 @@ expressed genes. What are the salient characteristics of the genes in this list?
  \begin{itemize}
   \item We could just count the number of genes annotated to a certain GO term, but commomn things are common
   \item Instead, GO analysis asks the question of whether a given GO term is annotated {\bf more often than we would expect by chance}
-\item Today, we will explain several algorithms for addressing this question. Similar approaches can be taken with other ontologies in a range of biological and medical settings.
+\item Today, we will explain some algorithms for addressing this question. Similar approaches can be taken with other ontologies in a range of biological and medical settings.
  \end{itemize}
 
 \end{frame}
@@ -506,8 +523,8 @@ k^p\left(n-k\right)^{1-p}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{binomial distribution: Example}
-\begin{mybluebox}{To repalce or not to replace}
+\begin{frame}{To replace or not to replace}
+\begin{mybluebox}{To replace or not to replace}
 The individual tests are not independent if we do not replace drawn balls
 \end{mybluebox}
 \begin{figure}
@@ -561,7 +578,7 @@ annotated to some GO term $t$, and thus 100 balls in the urn are
 colored blue.
 \item We then model the observation of 250 differentially
 expressed genes as the process of randomly removing 250 balls in turn
-from the urn without replacement. 
+from the urn {\bf without replacement}. 
 \end{itemize}
    
 \end{frame}
@@ -620,8 +637,8 @@ arbitrary annotations.
  
 \end{frame}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Fisher's exact test}
 \begin{mybluebox}{Probability of at least $m_t$ annotated genes in study set}
 Equation~(\ref{eq:hypergeometric}) is known as the \textit{hypergeometric
@@ -645,32 +662,8 @@ p(K\geq k^{'},n,p) =
  
 \end{frame}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{Fisher's exact test}
-
- we refer to the set of genes which are investigated in an experiment as the
-\emph{population set}. Note that we use the term \emph{gene} only for
-simplicity. The items annotated to the ontology terms may also be proteins or
-other biological entities. 
-
-\begin{itemize}
- \item We denote this set by the uppercase letter $M$,
-while the cardinality of the population set is denoted by $m$.
-\item  If, for example,
-a microarray experiment is conducted, the population set will comprise all genes
-that the microarray chip can detect. The outcome of the experiment is referred
-to as the \emph{study set}. It is denoted by $N$ and has the cardinality $n$.
-\item 
- In
-the microarray or RNA-seq scenario the study set could consist of all genes that were
-detected to be differentially expressed.
-\end{itemize}
-
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Term-for-Term}
  The standard approach to identify the most interesting terms is to
 perform Fisher's exact test for each term separately. For this reason,
@@ -690,108 +683,30 @@ as $m_t$.
 
  
 \end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 \begin{frame}{Term-for-Term}
-\begin{mybluebox}{study set}
- The study set is assumed to be a random sample that is
-obtained by drawing $n$ genes without replacement
+
+\begin{mybluebox}{Interpretation of ``significant'' GO terms}
+The set of significant GO terms is taken to represent the important biological characteristics of the experiment that led to the differential expression.
 \end{mybluebox}
- \begin{itemize}
- \item The random variable that describes the number of genes of
-the study set that are annotated to $t$ in this random sample, denoted
-by $X_t$, therefore follows the \index{hypergeometric distribution}
-hypergeometric distribution, i.e.,
- \end{itemize}
 
-
-
-\begin{equation}
-X_t \sim h(k|m;m_t;n) := P(X_t=k) = \frac{\displaystyle{m_t \choose
-    k}\displaystyle{{m - m_t} 
-\choose {n - k}}}{\displaystyle{m \choose n}}.
-\label{eq:hypergeometric-term-for-term}
-\end{equation}
-\begin{tiny}
- $P(X_t=k)$ gives the probability of observing exactly $k$
-annotated genes in a study set of size $n$ if the population set of
-size $m$ contains $m_t$ genes that are annotated to term $t$.
-\end{tiny}
-\end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{Term-for-Term}
-% \begin{mybluebox}{?}
-%  Null and alternative hypothesis
-% \end{mybluebox}
-
- The
- number of genes in the study
-set that are annotated to $t$ represents the observation. This number
-is denoted by $n_t$. Now we want to assess whether the study set is
-enriched for term $t$, i.e., whether the observed $n_t$ is higher than
-one would expect. In order to formulate a statistical test, we need to
-formulate a null hypothesis ($H_0$) and an alternative hypothesis
-($H_1$). 
-\begin{itemize}
- \item The null hypothesis in this case simply states that there is
-no positive association between genes annotated to the term $t$ and
-the study set; that is, there is no overrepresentation of term
-$t$.
-\item The alternative hypothesis is that there is overrepresentation of
-the term.
-\end{itemize}
-
-\end{frame}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{Term-for-Term}
- 
-The null hypothesis
-corresponds to the probability of observing a test statistic that is at least as
-extreme as the one that was observed given that the null hypothesis is true.
-\begin{itemize}
- \item Therefore, the null
-hypothesis corresponding to a one-sided
-test is rejected if the probability of observing $n_t$ \textit{or more} genes
-annotated to term $t$ in the study set by chance is less than
-$\alpha$ 
-\item By convention, $\alpha$ is usually set to 0.05
-\end{itemize}
-
-  This is given by:
-
-\begin{equation}
-  P(X_t\geq n_t|H_0) = \sum_{k=n_t}^{\min(m_t,n)} 
- \frac{\displaystyle{m_t \choose k}\displaystyle{{m - m_t} 
- \choose {n - k}}}{\displaystyle{m \choose n}}.
-\label{eqn:fisher.tft}
-\end{equation}
-
- 
-\end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{Term-for-Term}
-
-  Interpretation of ``significant'' GO terms
+  
 
 \begin{itemize}
  \item if $P(X_t\geq n_t|H_0) < \alpha$, the null hypothesis is
 rejected, and we declare the term $t$ to be \textit{significantly
 overrepresented} in the study set.
-\item The biological interpretation of
-significant overrepresentation is usually taken to be that the term
+\item The biological interpretation: term
 $t$ represents an important biological characteristic of the study
 set.
 \end{itemize}
-
- 
- 
 \end{frame}
-\begin{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Example}
 
 
 \begin{itemize}
@@ -822,45 +737,36 @@ the experiment.\end{tiny}
 
 \end{frame}
 
-%------------------------------------------------
-
-
-%------------------------------------------------
-
-
-%------------------------------------------------
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %----------------------------------------------------------------------------------------
 %	 SECTION 2
 %----------------------------------------------------------------------------------------
 
-\section{GOing Bayesian}
+%\section{GOing Bayesian}
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Model based gene-set analysis}
-\begin{mybluebox}{?}
-Today I will present a Bayesian algorithm for GO analysis that improves upon the ``term-for-term'' 
-approach we saw last week
+\begin{mybluebox}{GOing Bayesian}
+I will present a Bayesian algorithm for GO analysis that improves upon the ``term-for-term'' approach~\cite{Bauer2010}
 \end{mybluebox}
 
- \begin{figure}
- \centering
- \includegraphics[width=0.6\textwidth]{./img/GOingBayesian-title.png}
- % GOingBayesian-title.png: 0x0 pixel, 300dpi, 0.00x0.00 cm, bb=
+\begin{figure}
+\centering
+\includegraphics[width=0.6\textwidth]{./img/GOingBayesian-title.png}
 \end{figure}
 
 
 \end{frame}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Problems with the term for term approach}
- \begin{mybluebox}{?}
-  We have seen in the previous chapter that a major difficulty of the
+ \begin{mybluebox}{What's the problem?}
+A major difficulty of the
 standard approach to GO overrepresentation analysis is that each term
 is analyzed in isolation. 
  \end{mybluebox}
@@ -874,13 +780,12 @@ terms are also called significant.
 
 \end{frame}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Problems with the term for term approach}
  \begin{figure}
  \centering
  \includegraphics[width=0.6\textwidth]{./img/TfT-example.png}
- % TfT-example.png: 0x0 pixel, 300dpi, 0.00x0.00 cm, bb=
 \end{figure}
 
  \begin{itemize}
@@ -889,10 +794,10 @@ of significant terms is not uniform across all 44797 GO terms.
  \end{itemize}
 \end{frame}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Model based gene-set analysis (MGSA)}
- \begin{mybluebox}{X}
+ \begin{mybluebox}{MGSA}
   MGSA is a completely different approach to GO
 analysis that seeks to find the best combination of terms that
 correspond to an experimental result.
@@ -911,53 +816,58 @@ optimized for the entire set of GO terms.
  \end{itemize}
 
 \end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{GenGO}
- \begin{mybluebox}{X}
-  A basic idea of MGSA is to fit a model on all the terms simultaneously, rather than testing each 
-term in isolation, as other approaches do. One previous approach had attempted this.
+ \begin{mybluebox}{Global optimization}
+  A basic idea of MGSA is to fit a model on all the terms simultaneously, rather than testing each term in isolation. GenGO is a previous algorithm that attempts global optimization~\cite{Lu2008}
  \end{mybluebox}
 
- \begin{figure}
- \centering
- \includegraphics[width=0.3\textwidth]{./img/genGO.png}
- % genGO.png: 0x0 pixel, 300dpi, 0.00x0.00 cm, bb=
- \caption{\begin{tiny}In GenGO, GO terms are modeled as active (gray) or
+\begin{columns}
+\column{0.3\textwidth}
+\includegraphics[width=1\textwidth]{./img/genGO.png}
+\column{0.7\textwidth}
+\begin{tiny}
+\begin{itemize}
+\item GO terms are modeled as active (gray) or
 inactive (white) nodes that connect to the genes that are annotated to
-them. The genes are either \texttt{ON} (gray) or \texttt{OFF}
-(white). Intuitively speaking, the score in GenGO is maximized if a
+them. 
+\item The genes are either \texttt{ON} (gray) or \texttt{OFF}
+(white). 
+\item Intuitively speaking, the score in GenGO is maximized if a
 set of GO terms is selected that are connected to as many of the
 active genes as possible and as few of the inactive genes as possible.                               
-    Lu Y et al. (2008) A probabilistic generative
-model for GO enrichment analysis. \textit{Nucleic Acids Res};\textbf{36}:e109.                  
-                   \end{tiny}}
- \label{fig:genGO}
-\end{figure}
+\end{itemize}
+
+\end{tiny}
+
+\end{columns}
+
+
 
 \end{frame}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{GenGO (2)}
+\begin{mybluebox}{Notation}
+The GenGO algorithm defines several categories.
+\end{mybluebox}
+
 \begin{columns}
+
 \column{0.75\textwidth}
 \begin{scriptsize}
-
-The GenGO algorithm can be explained with the use of several
-categories.
-
 \begin{enumerate}
-\item $A_g$: \texttt{ON} gene node that is connected to at least one
-  \texttt{active} GO term (e.g., genes B and C in
-  Figure~\ref{fig:genGO-model}).
-\item $A_n$: \texttt{ON} gene node that is \textit{not} connected to any
+\item $\mathbf{A_g}$: \texttt{ON} gene node that is connected to at least one
+  \texttt{active} GO term (e.g., genes B and C).
+\item $\mathbf{A_n}$: \texttt{ON} gene node that is \textit{not} connected to any
   \texttt{active} GO term (e.g., gene A).
-\item $I$: \texttt{OFF} gene node (e.g., genes D and E).
-\item $S_g$: edge connecting  an \texttt{active} GO term with a node
+\item $\mathbf{I}$: \texttt{OFF} gene node (e.g., genes D and E).
+\item $\mathbf{S_g}$: edge connecting  an \texttt{active} GO term with a node
   in $I$ (e.g., edge from \texttt{GO:2} to gene D).
-\item $S_n$: edge connecting  an \texttt{inactive} GO term with a node
+\item $\mathbf{S_n}$: edge connecting  an \texttt{inactive} GO term with a node
   in $I$ (e.g., edge from \texttt{GO:4} to gene D).
 \end{enumerate}
 \end{scriptsize}
@@ -966,25 +876,40 @@ categories.
 \end{columns}
 
 \end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{GenGO (3)}
+\begin{mybluebox}{GenGO model}
+According to the model of genGO, GO terms can be ON or OFF, the ON terms activate genes and the OFF terms do not -- and then there is noise.
+\end{mybluebox}
+
 \begin{itemize}
- \item  According to the model of genGO, an \texttt{active} GO term does not
+ \item   an \texttt{active} GO term does not
 activate all of the genes it annotated; rather, because of noise or
 other errors, annotated genes are observed to be \texttt{OFF} with a
 probability of $1-a$. 
 \item Similarly, genes that are not annotated by any
 \texttt{active} GO term are observed to be \texttt{ON} with a
 probability of $b$. 
-\item The actual values of $a$ and $b$ can be chosen by
-the user or optimized by the genGO algorithm itself, but
-representative values are $a=0.9$ and $b=0.01$.
+\item $a$ and $b$ are user-defined parameters or can be optimized by grid search (representative values are $a=0.9$ and $b=0.01$).
 \end{itemize}
 
-One can then define a scoring function that is to be maximized,
-whereby $C$ is the set of \texttt{active} GO terms in the current
+ 
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{GenGO (4)}
+\begin{mybluebox}{GenGO model}
+GenGO defines an objective function to be maximized,
+\end{mybluebox}
+
+\begin{itemize}
+\item $C$ is the set of \texttt{active} GO terms in the current
 iteration.
+\end{itemize}
+
 \begin{multline}
 \mathcal{L}(C|p,q,G) = |A_g|\log a + |A_n|\log b  \\ + \; |S_g|\log (1-a)
 + |S_n| \log (1-b) - \alpha |C|
@@ -993,8 +918,11 @@ iteration.
  
 \end{frame}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{GenGO (4)}
  The first four terms of Equation~(\ref{eq:genGO}) are equivalent to the
 logarithm of the following equation
@@ -1003,7 +931,11 @@ a^{|A_g|}b^{|A_n|}(1-a)^{|S_g|}(1-b)^{|S_n|}
 \label{eq:genGO-no-log}
 \end{equation}
 
-It can be seen that the value of Equation~(\ref{eq:genGO-no-log}) is
+\begin{columns}
+
+\column{0.75\textwidth}
+\begin{scriptsize}
+Eq.~(\ref{eq:genGO-no-log}) is
 maximized if $|A_g|>|S_g|$ (because  $a>1-a$) and if $|S_n|>|A_n|$
 (because $1-b>b$). Thus, maximization of
 Equation~(\ref{eq:genGO-no-log}) would tend to identify sets of
@@ -1012,30 +944,48 @@ that more often than not annotate the \texttt{ON} genes
 ($|A_g|>|S_g|$). On the other hand, the \texttt{inactive} GO terms
 would more often than not annotate \texttt{OFF} genes
 ($|S_n|>|A_n|$).
+\end{scriptsize}
+\column{0.25\textwidth}
+ \includegraphics[width=1\textwidth]{./img/genGO.png}
+\end{columns}
+
+
 \end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{GenGO (5)}
+
+\begin{multline}
+\mathcal{L}(C|p,q,G) = |A_g|\log a + |A_n|\log b  \\ + \; |S_g|\log (1-a)
++ |S_n| \log (1-b) \boxed{-\alpha |C|}
+\label{eq:genGO}
+\end{multline}
  
- The final term in Equation~(\ref{eq:genGO}), $- \alpha |C|$ reduces the
-score linearly in the number of \texttt{active} GO terms. The authors
+\begin{itemize}
+\item The final term in Equation~(\ref{eq:genGO}), $- \alpha |C|$ reduces the
+score linearly in the number of \texttt{active} GO terms.
+\item The authors
 of genGO state that a value of $\alpha=3$ tends to produce good
 results. The genGO algorithm seeks to optimize the score for the
 current set of \texttt{active} GO terms $C$. 
+\end{itemize} 
+ 
+\begin{mybluebox}{Magic numbers}
+ Algorithms with ill defined heuristic parameters such as this may not perform well on datasets different to those they were originally tested on.
+\end{mybluebox}
+  
  
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{GenGO (6)}
-  \begin{mybluebox}{X}
-  \begin{scriptsize} GenGO performs iterations where all
- possible one-step changes of $C$ are considered, both changes that add
- a term $t_M$ to the current configuration as well as changes that
- remove a term $t_L$. In each iteration, the single-step change
+  \begin{mybluebox}{Iterative algorithm}
+  \begin{scriptsize}  
+ In each iteration, the single-step change (removal or additional of a term)
  with the highest improvement of the score is chosen until no further
  improvement is possible.  \end{scriptsize}
  \end{mybluebox}
- \scalebox{.7}{   
+ \scalebox{.5}{   
 \begin{algorithm}[H]
 \KwData{study set $\mathcal{S}$, population set $\mathcal{P}$, 
      Gene Ontology $\mathcal{G}$, annotations $\mathcal{A}$}
@@ -1061,9 +1011,9 @@ current set of \texttt{active} GO terms $C$.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{GenGO (7)}
- \begin{mybluebox}{X}
+ \begin{mybluebox}{Improving upon GenGO}
  The idea behind
-GenGO appears particularly attractive because it represents a novel way
+GenGO is  attractive because it represents a novel way
 of avoiding the statistical dependency problems associated with the
 overrepresentation methods described in the previous chapter.  
  \end{mybluebox}
@@ -1137,7 +1087,6 @@ and the false negative rate, $\beta$.
 \begin{figure}
  \centering
  \includegraphics[width=0.6\textwidth]{./img/mgsa-F1.jpg}
- % mgsa-F1.jpg: 0x0 pixel, 300dpi, 0.00x0.00 cm, bb=
 \end{figure}
 
 \end{frame}
@@ -1145,7 +1094,7 @@ and the false negative rate, $\beta$.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Structure of the MGSA Network}
- \begin{mybluebox}{X}
+ \begin{mybluebox}{Three layers: }
   More formally, the model can be described using a Bayesian network with three
 layers that is augmented with a set of parameters.
  \end{mybluebox}
@@ -1163,10 +1112,7 @@ layers that is augmented with a set of parameters.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Structure of the MGSA Network}
- \begin{mybluebox}{X}
-  More formally, the model can be described using a Bayesian network with three
-layers that is augmented with a set of parameters.
- \end{mybluebox}
+
 \begin{enumerate}
  \item \textcolor{gray}{A \emph{term layer}  }
  \item A \emph{hidden layer} $H=\{H_1,\ldots,H_n\}$ that contains Boolean nodes
@@ -1183,10 +1129,7 @@ values \texttt{ON} (1), or \texttt{OFF} (0).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Structure of the MGSA Network}
- \begin{mybluebox}{X}
-  More formally, the model can be described using a Bayesian network with three
-layers that is augmented with a set of parameters.
- \end{mybluebox}
+
 \begin{enumerate}
  \item \textcolor{gray}{A \emph{term layer}  }
  \item \textcolor{gray}{A \emph{hidden layer}}
@@ -1200,10 +1143,7 @@ layers that is augmented with a set of parameters.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]{Structure of the MGSA Network}
- \begin{mybluebox}{X}
-  More formally, the model can be described using a Bayesian network with three
-layers that is augmented with a set of parameters.
- \end{mybluebox}
+
 \begin{enumerate}
  \item \textcolor{gray}{A \emph{term layer}  }
  \item \textcolor{gray}{A \emph{hidden layer}}
@@ -1220,7 +1160,7 @@ layers that is augmented with a set of parameters.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  \begin{frame}{The MGSA model}
-  \begin{mybluebox}{X}
+  \begin{mybluebox}{MGSA--simplified}
    For didactic purposes, we will initially explain a simplified version
 of MGSA in which the parameters $\alpha$, $\beta$ and $p$ are considered to
 have known, fixed values.
@@ -1265,12 +1205,18 @@ then
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{H: The hidden layer}
- In the following, $T(H_i) \subseteq T$ is used to denote the set of
+\begin{itemize}
+\item  $T(H_i) \subseteq T$ is used to denote the set of
 terms to which gene $H_i$ is annotated, i.e., the parents of $H_i$ in
-the Bayesian network. For
+the Bayesian network. 
+\item For
 the $T \rightarrow H$ links, any node $H_i \in H$ is \texttt{ON}
 ($H_i=1$) if at least one of its parents is \texttt{active}. Otherwise it
 is \texttt{OFF}:
+\end{itemize}
+
+
+
 
 \begin{equation}
 P(H_i=1|T) = \begin{cases}1, & \ifgenehasactiveterm \\ 0, &
@@ -1306,10 +1252,8 @@ P(O_i=0|H_i=1) = \beta.
 \label{eq:mgsa-bernoulli-beta}
 \end{equation}
 \begin{itemize}
- \item The observed nodes correspond to the genes whose expression is observed by microarray 
-analysis of RNA-seq etc. According to our model, they may be ``OFF'', although the hidden node is 
-``ON'' (false negative) etc. Note that this model is not intended to provide an accurate view of 
-biology, but seems to work well for the task at hand
+ \item The observed nodes correspond to the genes whose expression is observed by RNA-seq (etc.). According to our model, they may be ``OFF'', although the hidden node is 
+``ON'' (false negative). 
 \end{itemize}
 
  
@@ -1322,7 +1266,6 @@ biology, but seems to work well for the task at hand
  \begin{figure}
  \centering
  \includegraphics[width=0.6\textwidth]{./img/fullyspecifiedMGSA.png}
- % fullyspecifiedMGSA.png: 0x0 pixel, 300dpi, 0.00x0.00 cm, bb=
 \end{figure}
 
  
@@ -1366,7 +1309,7 @@ P(O|T) = \alpha^{\numberofgenes{1}{0}} (1 - \alpha)^{\numberofgenes{0}{0}}
 \end{equation}
 \begin{itemize}
  \item Hence, Equation~(\ref{eq:alpha.beta.score}) calculates the product
-over $i=0,1$ of the probability of the observed states of the genes
+of the probability of the observed states of the genes
 given the hidden states of the terms. 
 \item For instance, for $i=1$, we need
 only consider hidden nodes whose parents include \texttt{active}
@@ -1386,7 +1329,7 @@ to the final expression for Equation~(\ref{eq:alpha.beta.score}).
 
 
 \begin{frame}{MAP: Maximum a postgeriori}
- \begin{mybluebox}{X}
+ \begin{mybluebox}{MAP}
    In Bayesian statistics, maximum a posteriori (MAP) estimation is often
 used to generate an estimate of the maximum value of a probability
 distribution. 
@@ -1469,7 +1412,7 @@ sample networks from the posterior probability, leading to a
 \textbf{collection of networks with high posterior probability}, each of
 which offers a good explanation of the data. 
  \end{itemize}
-\begin{mybluebox}{X}
+\begin{mybluebox}{MCMC}
 These considerations motivate the
 use of the MCMC algorithm to sample from the posterior distribution.
 \end{mybluebox}
@@ -1511,7 +1454,7 @@ use of the MCMC algorithm to sample from the posterior distribution.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\begin{frame}{Monte Carlo Markov Chain Algorithm}
+\begin{frame}{Monte Carlo Markov Chain (MCMC) Algorithm}
  \begin{itemize}
   \item A different approach is to calculate the marginal probabilities for
 each term being in the \texttt{active} state. 
@@ -1546,15 +1489,12 @@ possible values of $Y$:
   \item It is often difficult or
 impossible to derive marginal probabilities for complicated
 probability distributions because there are simply too many possible
-configurations of the variables to be able to calculate each one, as
-would be required for an analytical solution. 
-\item For this reason, a
-number of estimation algorithms have been developed that in essence
-sample from the distribution of the posterior probability and take the
+configurations of the variables to be able to calculate each one. 
+\item Estimation algorithms sample from the distribution of the posterior probability and take the
 proportion of samples in which $X$ takes on some specific value
 $x'$ as an estimate of the posterior probability of $x'$  
  \end{itemize}
-\begin{mybluebox}{X}
+\begin{mybluebox}{MCMC}
  One of the best known and most effective algorithms for this purpose
 is the Metropolis-Hasting algorithm, which is a Markov chain Monte
 Carlo (MCMC) method. The
@@ -1575,7 +1515,7 @@ if
  \frac{P(T^{p}|O)Q_T(T^{t}|T^{p})}{P(T^{t}|O)Q_T(T^{p}|T^t)}
  \label{eqn:acceptance}
 \end{equation}
-the proposal is accepted, i.e., $T^{t+1} = T^p$, otherwise it is rejected,
+the proposal is accepted, then we choose the proposed state, i.e., $T^{t+1} = T^p$, otherwise it is rejected,
 i.e., $T^{t+1} = T^t$.
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1622,7 +1562,7 @@ P(T_i|O)\approx \frac{C(T_i)}{l}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{MCMC}
-\begin{mybluebox}{X}
+\begin{mybluebox}{proposal density function}
  In order to finish the description of the algorithm, one needs to define
 classes of operations of which a proposal is chosen, that is, we need to
 specify $Q_T(T^p|T^t)$.
@@ -1709,7 +1649,23 @@ burn-in period was omitted from the pseudocode.\end{tiny}
 \end{frame}
 
 
+\begin{frame}{MGSA: Evaluation}
 
+\includegraphics[width=1\textwidth]{img/mgsa-F2.jpg} 
+\end{frame}
+
+\begin{frame}{MGSA: Example}
+
+\includegraphics[width=1\textwidth]{img/mgsa-F3.jpg} 
+\end{frame}
+
+\appendix
+
+\begin{frame}{References}
+	\nocite{*} % Display all references regardless of if they were cited
+	\bibliography{semalgs.bib}
+	\bibliographystyle{plain}
+\end{frame}
 %------------------------------------------------
 \end{document}
 \begin{frame}{Blocks}
@@ -1732,13 +1688,7 @@ burn-in period was omitted from the pseudocode.\end{tiny}
 %	 CLOSING/SUPPLEMENTARY SLIDES
 %----------------------------------------------------------------------------------------
 
-\appendix
 
-\begin{frame}{References}
-	\nocite{*} % Display all references regardless of if they were cited
-	\bibliography{semalgs.bib}
-	\bibliographystyle{plain}
-\end{frame}
 
 %------------------------------------------------
 
