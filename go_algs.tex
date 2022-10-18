@@ -56,7 +56,7 @@
 
 \institute{The Jackson Laboratory \\ Farmington CT}
 
-\date{2022-10-??}
+\date{2022-10-18}
 
 %------------------------------------------------
 
@@ -496,7 +496,7 @@ size of the DE set (denoted $|\textit{DE}|$).
 
 \begin{equation}
  \label{eq:tailsumdbinomial}
-p(k \geq k^{'},n,p) = \sum_{k=k^{'}}^{\max(p_t,|\textit{DE}|)}\binom{n}{k} 
+p(k \geq k^{'},n,p) = \sum_{k=k^{'}}^{\min(p_t,|\textit{DE}|)}\binom{n}{k} 
 k^p\left(n-k\right)^{1-p}.
 \end{equation}  
  
@@ -656,7 +656,7 @@ hypergeometric distribution is known as the \textbf{Exact Fisher
 \begin{equation}
  \label{eq:exactFisher}
 p(K\geq k^{'},n,p) = 
-\sum_{k=k^{'}}^{\max(K,|DE|)}\dfrac{\binom{m_t}{k}\binom{m-m_t}{n-k}}{\binom{m}{n}}
+\sum_{k=k^{'}}^{\min(K,|DE|)}\dfrac{\binom{m_t}{k}\binom{m-m_t}{n-k}}{\binom{m}{n}}
 \end{equation}
  
  
